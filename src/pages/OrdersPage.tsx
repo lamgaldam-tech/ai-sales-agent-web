@@ -22,29 +22,21 @@ export default function OrdersPage() {
 
   const totalRevenue = orders.reduce((sum, o) => sum + Number(o.revenue), 0)
   const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0
-
   const chartData = orders.reduce<Record<string, { date: string; revenue: number; orders: number }>>((acc, o) => {
     const date = formatDate(o.created_at)
     if (!acc[date]) acc[date] = { date, revenue: 0, orders: 0 }
-    acc[date].revenue += Number(o.revenue)
-    acc[date].orders += 1
+    acc[date].revenue += Number(o.revenue); acc[date].orders += 1
     return acc
   }, {})
   const chartArray = Object.values(chartData).slice(-14)
 
   if (loading) {
-    return (
-      <div>
-        <PageHeader title="Orders" description="Track revenue and order history" />
-        <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
-      </div>
-    )
+    return (<div><PageHeader title="Orders" description="Track revenue and order history" /><div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div></div>)
   }
 
   return (
     <div>
       <PageHeader title="Orders" description="Track revenue and order history" />
-
       {orders.length === 0 ? (
         <EmptyState icon={<ShoppingCart className="h-5 w-5" />} title="No orders yet" description="Orders will appear here once customers start purchasing through your AI agent" />
       ) : (
@@ -54,7 +46,6 @@ export default function OrdersPage() {
             <StatCard label="Total Orders" value={orders.length} icon={<ShoppingCart className="h-5 w-5" />} />
             <StatCard label="Avg Order Value" value={formatCurrency(avgOrderValue, business?.currency)} icon={<Calendar className="h-5 w-5" />} />
           </div>
-
           <div className="mt-6 card p-5">
             <h2 className="mb-4 text-sm font-semibold text-gray-900">Revenue Over Time</h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -67,7 +58,6 @@ export default function OrdersPage() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-
           <div className="mt-6 card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">

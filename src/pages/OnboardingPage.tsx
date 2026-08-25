@@ -32,7 +32,6 @@ export default function OnboardingPage() {
   const [language, setLanguage] = useState('en')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const selectedCountry = COUNTRIES.find((c) => c.value === country)
 
   async function handleSubmit(e: FormEvent) {
@@ -40,20 +39,8 @@ export default function OnboardingPage() {
     if (!user) return
     setError(null)
     setLoading(true)
-
-    const { error } = await supabase.from('businesses').insert({
-      id: user.id,
-      name, phone, type, country,
-      currency: selectedCountry?.currency || 'USD',
-      language,
-    })
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-      return
-    }
-
+    const { error } = await supabase.from('businesses').insert({ id: user.id, name, phone, type, country, currency: selectedCountry?.currency || 'USD', language })
+    if (error) { setError(error.message); setLoading(false); return }
     await refreshBusiness()
     navigate('/')
   }
@@ -62,13 +49,10 @@ export default function OnboardingPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 px-4">
       <div className="w-full max-w-lg">
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg">
-            <MessageSquare className="h-7 w-7" />
-          </div>
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg"><MessageSquare className="h-7 w-7" /></div>
           <h1 className="text-2xl font-bold text-gray-900">Set Up Your Business</h1>
           <p className="mt-1 text-sm text-gray-500">Tell us about your business to get started</p>
         </div>
-
         <div className="card p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
@@ -78,7 +62,6 @@ export default function OnboardingPage() {
                 <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="input pl-10" placeholder="My Store" />
               </div>
             </div>
-
             <div>
               <label className="label">Business Phone (WhatsApp)</label>
               <div className="relative">
@@ -86,14 +69,12 @@ export default function OnboardingPage() {
                 <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="input pl-10" placeholder="+1 555 000 0000" />
               </div>
             </div>
-
             <div>
               <label className="label">Business Type</label>
               <select value={type} onChange={(e) => setType(e.target.value)} className="input">
                 {BUSINESS_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label">Country</label>
@@ -111,16 +92,10 @@ export default function OnboardingPage() {
                 </select>
               </div>
             </div>
-
             {selectedCountry && (
-              <div className="flex items-center gap-2 rounded-lg bg-primary-50 px-3.5 py-2.5 text-sm text-primary-700">
-                <Globe className="h-4 w-4" />
-                <span>Currency: {selectedCountry.currency}</span>
-              </div>
+              <div className="flex items-center gap-2 rounded-lg bg-primary-50 px-3.5 py-2.5 text-sm text-primary-700"><Globe className="h-4 w-4" /><span>Currency: {selectedCountry.currency}</span></div>
             )}
-
             {error && <div className="rounded-lg bg-error-50 px-3.5 py-3 text-sm text-error-700">{error}</div>}
-
             <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Continue <ArrowRight className="h-4 w-4" /></>}
             </button>

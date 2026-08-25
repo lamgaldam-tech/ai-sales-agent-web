@@ -24,16 +24,9 @@ export default function DashboardPage() {
         supabase.from('customers').select('*').eq('business_id', business.id).order('created_at', { ascending: false }),
         supabase.from('orders').select('*, customer:customers(*)').order('created_at', { ascending: false }),
       ])
-
       const customers = (customersRes.data as Customer[]) || []
       const orders = (ordersRes.data as (Order & { customer: Customer | null })[]) || []
-
-      setStats({
-        customers: customers.length,
-        orders: orders.length,
-        revenue: orders.reduce((sum, o) => sum + Number(o.revenue), 0),
-        messages: 0,
-      })
+      setStats({ customers: customers.length, orders: orders.length, revenue: orders.reduce((sum, o) => sum + Number(o.revenue), 0), messages: 0 })
       setRecentCustomers(customers.slice(0, 5))
       setRecentOrders(orders.slice(0, 5))
       setLoading(false)
@@ -45,9 +38,7 @@ export default function DashboardPage() {
     return (
       <div>
         <PageHeader title="Dashboard" description="Overview of your business performance" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => <div key={i} className="card h-32 animate-pulse bg-gray-100" />)}
-        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[1, 2, 3, 4].map((i) => <div key={i} className="card h-32 animate-pulse bg-gray-100" />)}</div>
       </div>
     )
   }
@@ -55,14 +46,12 @@ export default function DashboardPage() {
   return (
     <div>
       <PageHeader title="Dashboard" description={`Welcome back, ${business?.name}`} />
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Customers" value={stats.customers} icon={<Users className="h-5 w-5" />} />
         <StatCard label="Orders" value={stats.orders} icon={<ShoppingCart className="h-5 w-5" />} />
         <StatCard label="Revenue" value={formatCurrency(stats.revenue, business?.currency)} icon={<DollarSign className="h-5 w-5" />} />
         <StatCard label="Messages" value={stats.messages} icon={<MessageCircle className="h-5 w-5" />} />
       </div>
-
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <div className="card p-5">
           <div className="mb-4 flex items-center justify-between">
@@ -76,13 +65,8 @@ export default function DashboardPage() {
               {recentCustomers.map((c) => (
                 <div key={c.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600">
-                      {c.name?.charAt(0).toUpperCase() || '?'}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{c.name || 'Unknown'}</p>
-                      <p className="text-xs text-gray-400">{c.phone}</p>
-                    </div>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600">{c.name?.charAt(0).toUpperCase() || '?'}</div>
+                    <div><p className="text-sm font-medium text-gray-900">{c.name || 'Unknown'}</p><p className="text-xs text-gray-400">{c.phone}</p></div>
                   </div>
                   <span className="text-xs text-gray-400">{formatRelativeTime(c.created_at)}</span>
                 </div>
@@ -90,7 +74,6 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
-
         <div className="card p-5">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-gray-900">Recent Orders</h2>
@@ -102,10 +85,7 @@ export default function DashboardPage() {
             <div className="space-y-2">
               {recentOrders.map((o) => (
                 <div key={o.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{o.customer?.name || o.customer?.phone || 'Unknown'}</p>
-                    <p className="text-xs text-gray-400">{formatRelativeTime(o.created_at)}</p>
-                  </div>
+                  <div><p className="text-sm font-medium text-gray-900">{o.customer?.name || o.customer?.phone || 'Unknown'}</p><p className="text-xs text-gray-400">{formatRelativeTime(o.created_at)}</p></div>
                   <span className="text-sm font-semibold text-accent-600">{formatCurrency(Number(o.revenue), business?.currency)}</span>
                 </div>
               ))}

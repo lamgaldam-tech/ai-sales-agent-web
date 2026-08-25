@@ -15,11 +15,9 @@ import LoadingScreen from './components/LoadingScreen'
 
 function ProtectedRoutes() {
   const { user, business, loading } = useAuth()
-
   if (loading) return <LoadingScreen />
   if (!user) return <Navigate to="/auth" replace />
   if (!business) return <Navigate to="/onboarding" replace />
-
   return (
     <DashboardLayout>
       <Routes>
@@ -39,19 +37,11 @@ function ProtectedRoutes() {
 
 export default function App() {
   const { user, business, loading } = useAuth()
-
   if (loading) return <LoadingScreen />
-
   return (
     <Routes>
-      <Route
-        path="/auth"
-        element={user && business ? <Navigate to="/" replace /> : user ? <Navigate to="/onboarding" replace /> : <AuthPage />}
-      />
-      <Route
-        path="/onboarding"
-        element={!user ? <Navigate to="/auth" replace /> : business ? <Navigate to="/" replace /> : <OnboardingPage />}
-      />
+      <Route path="/auth" element={user && business ? <Navigate to="/" replace /> : user ? <Navigate to="/onboarding" replace /> : <AuthPage />} />
+      <Route path="/onboarding" element={!user ? <Navigate to="/auth" replace /> : business ? <Navigate to="/" replace /> : <OnboardingPage />} />
       <Route path="/*" element={<ProtectedRoutes />} />
     </Routes>
   )

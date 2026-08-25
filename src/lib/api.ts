@@ -25,11 +25,7 @@ export async function getIntegrations() {
 
 export async function connectIntegration(type: string, name: string, identifier: string) {
   const headers = await getAuthHeaders()
-  const res = await fetch(`${API_HOST}/integrations`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ type, name, identifier }),
-  })
+  const res = await fetch(`${API_HOST}/integrations`, { method: 'POST', headers, body: JSON.stringify({ type, name, identifier }) })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Failed to start connection' }))
     throw new Error(err.error || 'Failed to start connection')
@@ -39,11 +35,7 @@ export async function connectIntegration(type: string, name: string, identifier:
 
 export async function disconnectIntegration(id: string) {
   const headers = await getAuthHeaders()
-  const res = await fetch(`${API_HOST}/integrations`, {
-    method: 'DELETE',
-    headers,
-    body: JSON.stringify({ id }),
-  })
+  const res = await fetch(`${API_HOST}/integrations`, { method: 'DELETE', headers, body: JSON.stringify({ id }) })
   if (!res.ok) throw new Error(`Request failed (${res.status})`)
   return res.json()
 }
@@ -57,11 +49,7 @@ export async function getProducts() {
 
 export async function sendBroadcast(messages: { phone: string; message: string }[]) {
   const headers = await getAuthHeaders()
-  const res = await fetch(`${API_HOST}/broadcast`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ messages }),
-  })
+  const res = await fetch(`${API_HOST}/broadcast`, { method: 'POST', headers, body: JSON.stringify({ messages }) })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Broadcast failed' }))
     throw new Error(err.error || 'Broadcast failed')

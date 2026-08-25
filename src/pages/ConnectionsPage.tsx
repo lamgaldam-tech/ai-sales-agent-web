@@ -1,29 +1,43 @@
-import { useState, useEffect } from 'react'
-import { RefreshCw, QrCode, CircleCheck as CheckCircle2, CircleAlert as AlertCircle, Loader as Loader2, Phone } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import QRCode from 'qrcode'
+import { RefreshCw, CircleCheck as CheckCircle2, CircleAlert as AlertCircle, Loader as Loader2, Phone, QrCode as QrIcon } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { getConnectionStatus } from '../lib/api'
 import PageHeader from '../components/PageHeader'
 
 export default function ConnectionsPage() {
   const { business } = useAuth()
-  const [connection, setConnection] = useState<{ connected: boolean; qr: string } | null>(null)
+  const [qrString, setQrString] = useState('')
+  const [connected, setConnected] = useState(false)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [qrDataUrl, setQrDataUrl] = useState('')
 
   async function fetchConnection() {
     if (!business) return
     setRefreshing(true)
     try {
       const data = await getConnectionStatus()
-      setConnection(data)
+      setConnected(data.connected)
+      setQrString(data.qr || '')
     } catch {
-      setConnection({ connected: false, qr: '' })
+      setConnected(false)
+      setQrString('')
     }
     setLoading(false)
     setRefreshing(false)
   }
 
   useEffect(() => { fetchConnection() }, [business])
+
+  useEffect(() => {
+    if (!qrString) { setQrDataUrl(''); return }
+    QRCode.toDataURL(qrString, { width: 256, margin: 2, color: { dark: '#000000', light: '#ffffff' } })
+      .then((url) => setQrDataUrl(url))
+      .catch(() => setQrDataUrl(''))
+  }, [qrString])
+
+  const qrPlaceholder = useMemo(() => <QrIcon className="h-20 w-20" />, [])
 
   return (
     <div>
@@ -43,7 +57,7 @@ export default function ConnectionsPage() {
           <div className="card flex h-64 items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
           </div>
-        ) : connection?.connected ? (
+        ) : connected ? (
           <div className="card p-8 text-center animate-fade-in">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent-100">
               <CheckCircle2 className="h-8 w-8 text-accent-600" />
@@ -64,11 +78,11 @@ export default function ConnectionsPage() {
             <p className="mt-1 text-sm text-gray-500">Scan the QR code below with your WhatsApp to connect your account.</p>
             <div className="mt-6 flex flex-col items-center">
               <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white p-4">
-                {connection?.qr ? (
-                  <img src={connection.qr} alt="WhatsApp QR Code" className="h-48 w-48" />
+                {qrDataUrl ? (
+                  <img src={qrDataUrl} alt="WhatsApp QR Code" className="h-48 w-48" />
                 ) : (
                   <div className="flex h-48 w-48 flex-col items-center justify-center text-gray-300">
-                    <QrCode className="h-20 w-20" />
+                    {qrPlaceholder}
                     <p className="mt-2 text-xs">QR code unavailable</p>
                   </div>
                 )}

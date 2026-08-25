@@ -8,11 +8,7 @@ import type { Customer } from '../lib/types'
 import PageHeader from '../components/PageHeader'
 import EmptyState from '../components/EmptyState'
 
-interface BroadcastEntry {
-  phone: string
-  message: string
-  customerName?: string
-}
+interface BroadcastEntry { phone: string; message: string; customerName?: string }
 
 export default function BroadcastPage() {
   const { business } = useAuth()
@@ -31,9 +27,7 @@ export default function BroadcastPage() {
 
   function addEntry() { setEntries((prev) => [...prev, { phone: '', message: '' }]) }
   function removeEntry(index: number) { setEntries((prev) => prev.filter((_, i) => i !== index)) }
-  function updateEntry(index: number, field: keyof BroadcastEntry, value: string) {
-    setEntries((prev) => prev.map((e, i) => (i === index ? { ...e, [field]: value } : e)))
-  }
+  function updateEntry(index: number, field: keyof BroadcastEntry, value: string) { setEntries((prev) => prev.map((e, i) => (i === index ? { ...e, [field]: value } : e))) }
   function addCustomer(customer: Customer) {
     setEntries((prev) => {
       if (prev.some((e) => e.phone === customer.phone)) return prev
@@ -49,28 +43,18 @@ export default function BroadcastPage() {
       const data = await sendBroadcast(valid.map((e) => ({ phone: e.phone, message: e.message })))
       setResult({ success: data.sent, failed: data.failed })
       setEntries([{ phone: '', message: '' }])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Broadcast failed')
-    }
+    } catch (err) { setError(err instanceof Error ? err.message : 'Broadcast failed') }
     setSending(false)
   }
 
   if (loading) {
-    return (
-      <div>
-        <PageHeader title="Broadcast" description="Send bulk messages to your customers" />
-        <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
-      </div>
-    )
+    return (<div><PageHeader title="Broadcast" description="Send bulk messages to your customers" /><div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div></div>)
   }
 
   return (
     <div>
-      <PageHeader
-        title="Broadcast"
-        description="Send bulk messages to your customers via WhatsApp"
-        action={<button onClick={handleSend} disabled={sending} className="btn-primary">{sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Send Broadcast</button>}
-      />
+      <PageHeader title="Broadcast" description="Send bulk messages to your customers via WhatsApp"
+        action={<button onClick={handleSend} disabled={sending} className="btn-primary">{sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Send Broadcast</button>} />
 
       {result && (
         <div className="mb-4 flex items-center gap-3 rounded-lg bg-accent-50 px-4 py-3 text-sm text-accent-700 animate-slide-up">
@@ -79,7 +63,6 @@ export default function BroadcastPage() {
           <button onClick={() => setResult(null)} className="ml-auto"><X className="h-4 w-4" /></button>
         </div>
       )}
-
       {error && (
         <div className="mb-4 flex items-center gap-2 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-700 animate-slide-up">
           <AlertCircle className="h-4 w-4 shrink-0" /><span>{error}</span>
@@ -88,16 +71,12 @@ export default function BroadcastPage() {
 
       {customers.length > 0 && (
         <div className="mb-6 card p-4">
-          <div className="mb-3 flex items-center gap-2">
-            <Users className="h-4 w-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700">Quick add from customers</span>
-          </div>
+          <div className="mb-3 flex items-center gap-2"><Users className="h-4 w-4 text-gray-400" /><span className="text-sm font-medium text-gray-700">Quick add from customers</span></div>
           <div className="flex flex-wrap gap-2">
             {customers.slice(0, 10).map((c) => (
               <button key={c.id} onClick={() => addCustomer(c)} className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600">{initials(c.name)}</div>
-                {c.name || formatPhone(c.phone)}
-                <Plus className="h-3 w-3 text-gray-400" />
+                {c.name || formatPhone(c.phone)}<Plus className="h-3 w-3 text-gray-400" />
               </button>
             ))}
           </div>
@@ -112,19 +91,12 @@ export default function BroadcastPage() {
               {entries.length > 1 && <button onClick={() => removeEntry(index)} className="rounded-lg p-1.5 text-gray-400 hover:bg-error-50 hover:text-error-600 transition-colors"><X className="h-4 w-4" /></button>}
             </div>
             <div className="mt-3 space-y-3">
-              <div>
-                <label className="label">Phone Number</label>
-                <input type="tel" value={entry.phone} onChange={(e) => updateEntry(index, 'phone', e.target.value)} className="input" placeholder="+1 555 000 0000" />
-              </div>
-              <div>
-                <label className="label">Message</label>
-                <textarea value={entry.message} onChange={(e) => updateEntry(index, 'message', e.target.value)} className="input min-h-[80px] resize-y" placeholder="Type your broadcast message..." />
-              </div>
+              <div><label className="label">Phone Number</label><input type="tel" value={entry.phone} onChange={(e) => updateEntry(index, 'phone', e.target.value)} className="input" placeholder="+1 555 000 0000" /></div>
+              <div><label className="label">Message</label><textarea value={entry.message} onChange={(e) => updateEntry(index, 'message', e.target.value)} className="input min-h-[80px] resize-y" placeholder="Type your broadcast message..." /></div>
             </div>
           </div>
         ))}
       </div>
-
       <button onClick={addEntry} className="mt-4 btn-secondary w-full"><Plus className="h-4 w-4" /> Add Another Message</button>
     </div>
   )

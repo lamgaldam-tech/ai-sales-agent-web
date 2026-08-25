@@ -16,29 +16,19 @@ export default function ProductsPage() {
   async function fetchProducts() {
     if (!business) return
     setLoading(true)
-    try {
-      const data = await getProducts()
-      setProducts(data.products || [])
-    } catch {
-      // ignore
-    }
+    try { const data = await getProducts(); setProducts(data.products || []) }
+    catch { /* ignore */ }
     setLoading(false)
   }
 
   useEffect(() => { fetchProducts() }, [business])
 
-  const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.description.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = products.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase()))
 
   return (
     <div>
-      <PageHeader
-        title="Products"
-        description="Products synced from your connected integrations"
-        action={<button onClick={fetchProducts} className="btn-secondary"><RefreshCw className="h-4 w-4" /> Refresh</button>}
-      />
+      <PageHeader title="Products" description="Products synced from your connected integrations"
+        action={<button onClick={fetchProducts} className="btn-secondary"><RefreshCw className="h-4 w-4" /> Refresh</button>} />
 
       {loading ? (
         <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>

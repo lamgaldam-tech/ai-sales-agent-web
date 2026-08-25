@@ -23,11 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   async function fetchBusiness(userId: string) {
-    const { data } = await supabase
-      .from('businesses')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle()
+    const { data } = await supabase.from('businesses').select('*').eq('id', userId).maybeSingle()
     setBusiness(data as Business | null)
   }
 
@@ -35,27 +31,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchBusiness(session.user.id).finally(() => setLoading(false))
-      } else {
-        setLoading(false)
-      }
+      if (session?.user) { fetchBusiness(session.user.id).finally(() => setLoading(false)) }
+      else { setLoading(false) }
     })
-
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchBusiness(session.user.id)
-      } else {
-        setBusiness(null)
-      }
+      if (session?.user) { fetchBusiness(session.user.id) } else { setBusiness(null) }
       setLoading(false)
     })
-
-    return () => {
-      authListener.subscription.unsubscribe()
-    }
+    return () => { authListener.subscription.unsubscribe() }
   }, [])
 
   async function signUp(email: string, password: string) {
@@ -70,21 +55,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null }
   }
 
-  async function signOut() {
-    await supabase.auth.signOut()
-    setBusiness(null)
-  }
-
-  async function refreshBusiness() {
-    if (user) {
-      await fetchBusiness(user.id)
-    }
-  }
+  async function signOut() { await supabase.auth.signOut(); setBusiness(null) }
+  async function refreshBusiness() { if (user) { await fetchBusiness(user.id) } }
 
   return (
-    <AuthContext.Provider
-      value={{ session, user, business, loading, signUp, signIn, signOut, refreshBusiness }}
-    >
+    <AuthContext.Provider value={{ session, user, business, loading, signUp, signIn, signOut, refreshBusiness }}>
       {children}
     </AuthContext.Provider>
   )

@@ -28,9 +28,7 @@ export default function IntegrationsPage() {
     try {
       const data = await getIntegrations()
       setIntegrations(data.integrations || [])
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
     setLoading(false)
   }
 
@@ -39,12 +37,8 @@ export default function IntegrationsPage() {
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.data?.type === 'OAUTH_COMPLETE') {
-        if (event.data.status === 'success') {
-          fetchIntegrations()
-          setShowAdd(false)
-        } else {
-          alert(event.data.error || 'OAuth authentication failed')
-        }
+        if (event.data.status === 'success') { fetchIntegrations(); setShowAdd(false) }
+        else { alert(event.data.error || 'OAuth authentication failed') }
         if (popupRef.current) popupRef.current.close()
       }
     }
@@ -57,54 +51,35 @@ export default function IntegrationsPage() {
     setConnecting(true)
     try {
       const data = await connectIntegration(newType, newName, newIdentifier)
-      if (data.auth_url) {
-        popupRef.current = window.open(data.auth_url, 'oauth_popup', 'width=600,height=700')
-      } else {
-        fetchIntegrations()
-        setShowAdd(false)
-      }
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to start connection')
-    }
+      if (data.auth_url) { popupRef.current = window.open(data.auth_url, 'oauth_popup', 'width=600,height=700') }
+      else { fetchIntegrations(); setShowAdd(false) }
+    } catch (err) { alert(err instanceof Error ? err.message : 'Failed to start connection') }
     setConnecting(false)
   }
 
   async function handleDisconnect(id: string) {
     if (!confirm('Remove this integration?')) return
-    try {
-      await disconnectIntegration(id)
-      fetchIntegrations()
-    } catch {
-      alert('Failed to remove integration')
-    }
+    try { await disconnectIntegration(id); fetchIntegrations() }
+    catch { alert('Failed to remove integration') }
   }
 
   if (loading) {
     return (
       <div>
         <PageHeader title="Integrations" description="Connect your data sources" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => <div key={i} className="card h-40 animate-pulse bg-gray-100" />)}
-        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{[1, 2, 3].map((i) => <div key={i} className="card h-40 animate-pulse bg-gray-100" />)}</div>
       </div>
     )
   }
 
   return (
     <div>
-      <PageHeader
-        title="Integrations"
-        description="Connect your store and data sources to feed product info to your AI agent"
-        action={<button onClick={() => setShowAdd(true)} className="btn-primary"><Plus className="h-4 w-4" /> Add Integration</button>}
-      />
+      <PageHeader title="Integrations" description="Connect your store and data sources to feed product info to your AI agent"
+        action={<button onClick={() => setShowAdd(true)} className="btn-primary"><Plus className="h-4 w-4" /> Add Integration</button>} />
 
       {integrations.length === 0 ? (
-        <EmptyState
-          icon={<Plus className="h-5 w-5" />}
-          title="No integrations yet"
-          description="Connect Shopify, YouCan, or Google Sheets to sync your products"
-          action={<button onClick={() => setShowAdd(true)} className="btn-primary"><Plus className="h-4 w-4" /> Add Integration</button>}
-        />
+        <EmptyState icon={<Plus className="h-5 w-5" />} title="No integrations yet" description="Connect Shopify, YouCan, or Google Sheets to sync your products"
+          action={<button onClick={() => setShowAdd(true)} className="btn-primary"><Plus className="h-4 w-4" /> Add Integration</button>} />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {integrations.map((int) => {
@@ -115,10 +90,7 @@ export default function IntegrationsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${meta.color}`}><Icon className="h-5 w-5" /></div>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{int.name}</p>
-                      <p className="text-xs text-gray-400">{meta.label}</p>
-                    </div>
+                    <div><p className="text-sm font-semibold text-gray-900">{int.name}</p><p className="text-xs text-gray-400">{meta.label}</p></div>
                   </div>
                   {int.connected ? <CheckCircle2 className="h-5 w-5 text-accent-500" /> : <XCircle className="h-5 w-5 text-gray-300" />}
                 </div>
@@ -150,27 +122,18 @@ export default function IntegrationsPage() {
                     const Icon = meta.icon
                     return (
                       <button key={type} onClick={() => setNewType(type)} className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${newType === type ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                        <Icon className="h-6 w-6 text-gray-600" />
-                        <span className="text-xs font-medium text-gray-700">{meta.label}</span>
+                        <Icon className="h-6 w-6 text-gray-600" /><span className="text-xs font-medium text-gray-700">{meta.label}</span>
                       </button>
                     )
                   })}
                 </div>
               </div>
-              <div>
-                <label className="label">Name</label>
-                <input type="text" required value={newName} onChange={(e) => setNewName(e.target.value)} className="input" placeholder="My Store" />
-              </div>
-              <div>
-                <label className="label">{newType === 'google_sheets' ? 'Spreadsheet ID' : 'Shop Domain'}</label>
-                <input type="text" required value={newIdentifier} onChange={(e) => setNewIdentifier(e.target.value)} className="input" placeholder={newType === 'google_sheets' ? '1ABC...xyz' : 'mystore.myshopify.com'} />
-              </div>
+              <div><label className="label">Name</label><input type="text" required value={newName} onChange={(e) => setNewName(e.target.value)} className="input" placeholder="My Store" /></div>
+              <div><label className="label">{newType === 'google_sheets' ? 'Spreadsheet ID' : 'Shop Domain'}</label><input type="text" required value={newIdentifier} onChange={(e) => setNewIdentifier(e.target.value)} className="input" placeholder={newType === 'google_sheets' ? '1ABC...xyz' : 'mystore.myshopify.com'} /></div>
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <button onClick={() => setShowAdd(false)} className="btn-secondary">Cancel</button>
-              <button onClick={handleConnect} disabled={connecting || !newName || !newIdentifier} className="btn-primary">
-                {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />} Connect
-              </button>
+              <button onClick={handleConnect} disabled={connecting || !newName || !newIdentifier} className="btn-primary">{connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />} Connect</button>
             </div>
           </div>
         </div>
