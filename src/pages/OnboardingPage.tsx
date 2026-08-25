@@ -43,10 +43,7 @@ export default function OnboardingPage() {
 
     const { error } = await supabase.from('businesses').insert({
       id: user.id,
-      name,
-      phone,
-      type,
-      country,
+      name, phone, type, country,
       currency: selectedCountry?.currency || 'USD',
       language,
     })
@@ -78,14 +75,7 @@ export default function OnboardingPage() {
               <label className="label">Business Name</label>
               <div className="relative">
                 <Store className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="input pl-10"
-                  placeholder="My Store"
-                />
+                <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="input pl-10" placeholder="My Store" />
               </div>
             </div>
 
@@ -93,51 +83,27 @@ export default function OnboardingPage() {
               <label className="label">Business Phone (WhatsApp)</label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="input pl-10"
-                  placeholder="+1 555 000 0000"
-                />
+                <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="input pl-10" placeholder="+1 555 000 0000" />
               </div>
             </div>
 
             <div>
               <label className="label">Business Type</label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                className="input"
-              >
-                {BUSINESS_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
+              <select value={type} onChange={(e) => setType(e.target.value)} className="input">
+                {BUSINESS_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label">Country</label>
-                <select
-                  value={country}
-                  onChange={(e) => { setCountry(e.target.value); }}
-                  className="input"
-                >
-                  {COUNTRIES.map((c) => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
+                <select value={country} onChange={(e) => setCountry(e.target.value)} className="input">
+                  {COUNTRIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
               </div>
-
               <div>
                 <label className="label">Language</label>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="input"
-                >
+                <select value={language} onChange={(e) => setLanguage(e.target.value)} className="input">
                   <option value="en">English</option>
                   <option value="fr">French</option>
                   <option value="ar">Arabic</option>
@@ -153,11 +119,7 @@ export default function OnboardingPage() {
               </div>
             )}
 
-            {error && (
-              <div className="rounded-lg bg-error-50 px-3.5 py-3 text-sm text-error-700">
-                {error}
-              </div>
-            )}
+            {error && <div className="rounded-lg bg-error-50 px-3.5 py-3 text-sm text-error-700">{error}</div>}
 
             <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Continue <ArrowRight className="h-4 w-4" /></>}

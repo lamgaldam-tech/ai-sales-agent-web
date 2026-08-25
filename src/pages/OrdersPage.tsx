@@ -16,14 +16,8 @@ export default function OrdersPage() {
 
   useEffect(() => {
     if (!business) return
-    supabase
-      .from('orders')
-      .select('*, customer:customers(*)')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setOrders((data as (Order & { customer: Customer | null })[]) || [])
-        setLoading(false)
-      })
+    supabase.from('orders').select('*, customer:customers(*)').order('created_at', { ascending: false })
+      .then(({ data }) => { setOrders((data as (Order & { customer: Customer | null })[]) || []); setLoading(false) })
   }, [business])
 
   const totalRevenue = orders.reduce((sum, o) => sum + Number(o.revenue), 0)
@@ -42,9 +36,7 @@ export default function OrdersPage() {
     return (
       <div>
         <PageHeader title="Orders" description="Track revenue and order history" />
-        <div className="flex h-64 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
-        </div>
+        <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
       </div>
     )
   }
@@ -54,11 +46,7 @@ export default function OrdersPage() {
       <PageHeader title="Orders" description="Track revenue and order history" />
 
       {orders.length === 0 ? (
-        <EmptyState
-          icon={<ShoppingCart className="h-5 w-5" />}
-          title="No orders yet"
-          description="Orders will appear here once customers start purchasing through your AI agent"
-        />
+        <EmptyState icon={<ShoppingCart className="h-5 w-5" />} title="No orders yet" description="Orders will appear here once customers start purchasing through your AI agent" />
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-3">
@@ -74,10 +62,7 @@ export default function OrdersPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9ca3af" />
                 <YAxis tick={{ fontSize: 12 }} stroke="#9ca3af" />
-                <Tooltip
-                  formatter={(value: number) => formatCurrency(value, business?.currency)}
-                  contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px' }}
-                />
+                <Tooltip formatter={(value: number) => formatCurrency(value, business?.currency)} contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px' }} />
                 <Bar dataKey="revenue" fill="#2563eb" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -96,12 +81,8 @@ export default function OrdersPage() {
                 <tbody className="divide-y divide-gray-100">
                   {orders.map((o) => (
                     <tr key={o.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900">
-                        {o.customer?.name || o.customer?.phone || 'Unknown'}
-                      </td>
-                      <td className="px-4 py-3.5 text-right text-sm font-semibold text-accent-600">
-                        {formatCurrency(Number(o.revenue), business?.currency)}
-                      </td>
+                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900">{o.customer?.name || o.customer?.phone || 'Unknown'}</td>
+                      <td className="px-4 py-3.5 text-right text-sm font-semibold text-accent-600">{formatCurrency(Number(o.revenue), business?.currency)}</td>
                       <td className="px-4 py-3.5 text-sm text-gray-500">{formatDate(o.created_at)}</td>
                     </tr>
                   ))}

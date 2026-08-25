@@ -15,18 +15,6 @@ export interface Business {
 
 export type IntegrationType = 'shopify' | 'youcan' | 'google_sheets'
 
-export interface Integration {
-  id: string
-  business_id: string
-  type: IntegrationType
-  name: string
-  identifier: string
-  access_token: string
-  refresh_token: string
-  created_at: string
-  updated_at: string
-}
-
 export interface IntegrationStatus {
   id: string
   name: string
@@ -71,13 +59,6 @@ export interface Order {
   revenue: number
   created_at: string
   updated_at: string
-}
-
-export interface CustomerWithStats extends Customer {
-  message_count?: number
-  last_message_at?: string | null
-  order_count?: number
-  total_revenue?: number
 }
 
 export interface Product {

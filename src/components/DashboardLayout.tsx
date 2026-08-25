@@ -1,17 +1,8 @@
 import { ReactNode, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  MessageSquare,
-  LayoutDashboard,
-  Plug,
-  Boxes,
-  Users,
-  ShoppingCart,
-  Send,
-  Settings,
-  LogOut,
-  Menu,
-  X,
+  MessageSquare, LayoutDashboard, Plug, Boxes, Users,
+  ShoppingCart, Send, Settings, LogOut, Menu, X,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { initials } from '../lib/utils'
@@ -60,9 +51,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  isActive ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`
               }
             >

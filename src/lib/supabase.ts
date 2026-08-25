@@ -10,3 +10,5 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
   },
 })
+
+export const API_HOST = import.meta.env.VITE_API_HOST as string

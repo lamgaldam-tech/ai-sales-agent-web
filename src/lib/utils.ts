@@ -4,33 +4,14 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
 
 export function formatCurrency(amount: number, currency = 'USD'): string {
   const symbols: Record<string, string> = {
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    MAD: 'DH',
-    SAR: 'SR',
-    AED: 'AED',
-    EGP: 'EGP',
+    USD: '$', EUR: '€', GBP: '£', MAD: 'DH', SAR: 'SR', AED: 'AED', EGP: 'EGP',
   }
   const symbol = symbols[currency] || currency
   return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
 export function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
-export function formatDateTime(date: string): string {
-  return new Date(date).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 export function formatRelativeTime(date: string): string {

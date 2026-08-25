@@ -1,11 +1,9 @@
 import { useState, FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { MessageSquare, Loader as Loader2, CircleAlert as AlertCircle, Mail, Lock } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 export default function AuthPage() {
   const { signIn, signUp } = useAuth()
-  const navigate = useNavigate()
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -62,14 +60,7 @@ export default function AuthPage() {
               <label className="label">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input pl-10"
-                  placeholder="you@business.com"
-                />
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input pl-10" placeholder="you@business.com" />
               </div>
             </div>
 
@@ -77,15 +68,7 @@ export default function AuthPage() {
               <label className="label">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input pl-10"
-                  placeholder="••••••••"
-                />
+                <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="input pl-10" placeholder="••••••••" />
               </div>
             </div>
 
@@ -103,10 +86,7 @@ export default function AuthPage() {
 
           <p className="mt-6 text-center text-xs text-gray-400">
             {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
-            <button
-              onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null) }}
-              className="font-medium text-primary-600 hover:text-primary-700"
-            >
+            <button onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null) }} className="font-medium text-primary-600 hover:text-primary-700">
               {mode === 'signin' ? 'Sign up' : 'Sign in'}
             </button>
           </p>
