@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, CircleCheck as CheckCircle2, Circle as XCircle, Loader as Loader2, ShoppingCart, Sheet, Store, ExternalLink } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Plus, Trash2, CircleCheck as CheckCircle2, Circle as XCircle, ShoppingCart, Sheet, Store, ExternalLink } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { getIntegrations, disconnectIntegration, buildIntegrationRedirectUrl, extractSheetId } from '../lib/api'
 import type { IntegrationType, IntegrationStatus } from '../lib/types'
@@ -19,8 +19,6 @@ export default function IntegrationsPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [newType, setNewType] = useState<IntegrationType>('shopify')
   const [inputValue, setInputValue] = useState('')
-  const [connecting, setConnecting] = useState(false)
-  const popupRef = useRef<Window | null>(null)
 
   async function fetchIntegrations() {
     if (!business) return
@@ -33,31 +31,13 @@ export default function IntegrationsPage() {
 
   useEffect(() => { fetchIntegrations() }, [business])
 
-  useEffect(() => {
-    function handleMessage(event: MessageEvent) {
-      if (event.data?.type === 'OAUTH_COMPLETE') {
-        if (event.data.status === 'success') { fetchIntegrations(); setShowAdd(false) }
-        else { alert(event.data.error || 'Authentication failed') }
-        if (popupRef.current) popupRef.current.close()
-        setConnecting(false)
-      }
-    }
-    window.addEventListener('message', handleMessage)
-    return () => window.removeEventListener('message', handleMessage)
-  }, [])
-
   function handleConnect() {
     if (!business || !inputValue.trim()) return
     const raw = inputValue.trim()
     const name = newType === 'google_sheets' ? extractSheetId(raw) : raw
     if (!name) return
-    setConnecting(true)
     const url = buildIntegrationRedirectUrl(business.id, name, newType)
-    popupRef.current = window.open(url, 'oauth_popup', 'width=600,height=700')
-    if (!popupRef.current) {
-      alert('Please allow popups to connect your integration')
-      setConnecting(false)
-    }
+    window.location.href = url
   }
 
   async function handleDisconnect(id: string) {
@@ -144,8 +124,8 @@ export default function IntegrationsPage() {
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <button onClick={() => { setShowAdd(false); setInputValue(''); setNewType('shopify') }} className="btn-secondary">Cancel</button>
-              <button onClick={handleConnect} disabled={connecting || !inputValue.trim()} className="btn-primary">
-                {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />} Connect
+              <button onClick={handleConnect} disabled={!inputValue.trim()} className="btn-primary">
+                <ExternalLink className="h-4 w-4" /> Connect
               </button>
             </div>
           </div>
