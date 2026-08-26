@@ -37,7 +37,11 @@ export default function IntegrationsPage() {
     const name = newType === 'google_sheets' ? extractSheetId(raw) : raw
     if (!name) return
     const url = buildIntegrationRedirectUrl(business.id, name, newType)
-    window.location.href = url
+    window.open(url, '_blank', 'width=600,height=700')
+    setShowAdd(false)
+    setInputValue('')
+    setNewType('shopify')
+    setTimeout(() => fetchIntegrations(), 3000)
   }
 
   async function handleDisconnect(id: string) {
