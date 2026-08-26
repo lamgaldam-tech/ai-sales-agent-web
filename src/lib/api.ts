@@ -23,14 +23,22 @@ export async function getIntegrations() {
   return res.json() as Promise<{ integrations: { id: string; name: string; type: IntegrationType; identifier: string; connected: boolean }[] }>
 }
 
-export async function connectIntegration(type: string, name: string, identifier: string) {
-  const headers = await getAuthHeaders()
-  const res = await fetch(`${API_HOST}/integrations`, { method: 'POST', headers, body: JSON.stringify({ type, name, identifier }) })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Failed to start connection' }))
-    throw new Error(err.error || 'Failed to start connection')
+export function buildIntegrationRedirectUrl(businessId: string, name: string, type: IntegrationType): string {
+  return `${API_HOST}/integrations/${encodeURIComponent(businessId)}/${encodeURIComponent(name)}/${encodeURIComponent(type)}/redirect`
+}
+
+export function extractSheetId(input: string): string {
+  const trimmed = input.trim()
+  try {
+    const url = new URL(trimmed)
+    if (url.hostname.includes('docs.google.com') && url.pathname.includes('/spreadsheets/')) {
+      const match = url.pathname.match(/\/d\/([a-zA-Z0-9-_]+)/)
+      if (match) return match[1]
+    }
+  } catch {
+    // not a URL, return as-is (already a sheet ID)
   }
-  return res.json() as Promise<{ auth_url?: string }>
+  return trimmed
 }
 
 export async function disconnectIntegration(id: string) {
