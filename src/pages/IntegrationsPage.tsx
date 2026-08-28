@@ -44,6 +44,13 @@ export default function IntegrationsPage() {
     setTimeout(() => fetchIntegrations(), 3000)
   }
 
+  function handleReconnect(identifier: string, type: IntegrationType) {
+    if (!business) return
+    const url = buildIntegrationRedirectUrl(business.id, identifier, type)
+    window.open(url, '_blank', 'width=600,height=700')
+    setTimeout(() => fetchIntegrations(), 3000)
+  }
+
   async function handleDisconnect(id: string) {
     if (!confirm('Remove this integration?')) return
     try { await disconnectIntegration(id); fetchIntegrations() }
@@ -77,13 +84,20 @@ export default function IntegrationsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${meta.color}`}><Icon className="h-5 w-5" /></div>
-                    <div><p className="text-sm font-semibold text-gray-900">{int.name}</p><p className="text-xs text-gray-400">{meta.label}</p></div>
+                    <div className="min-w-0"><p className="truncate text-sm font-semibold text-gray-900" title={int.name}>{int.name}</p><p className="text-xs text-gray-400">{meta.label}</p></div>
                   </div>
                   {int.connected ? <CheckCircle2 className="h-5 w-5 text-accent-500" /> : <XCircle className="h-5 w-5 text-gray-300" />}
                 </div>
                 <div className="mt-4 flex items-center justify-between">
                   <span className={`text-xs font-medium ${int.connected ? 'text-accent-600' : 'text-gray-400'}`}>{int.connected ? 'Connected' : 'Not connected'}</span>
-                  <button onClick={() => handleDisconnect(int.id)} className="rounded-lg p-2 text-gray-400 hover:bg-error-50 hover:text-error-600 transition-colors" title="Remove"><Trash2 className="h-4 w-4" /></button>
+                  <div className="flex items-center gap-1">
+                    {!int.connected && (
+                      <button onClick={() => handleReconnect(int.identifier, int.type)} className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors" title="Connect">
+                        <ExternalLink className="h-3.5 w-3.5" /> Connect
+                      </button>
+                    )}
+                    <button onClick={() => handleDisconnect(int.id)} className="rounded-lg p-2 text-gray-400 hover:bg-error-50 hover:text-error-600 transition-colors" title="Remove"><Trash2 className="h-4 w-4" /></button>
+                  </div>
                 </div>
               </div>
             )
