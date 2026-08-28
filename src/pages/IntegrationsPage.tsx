@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, CircleCheck as CheckCircle2, Circle as XCircle, ShoppingCart, Sheet, Store, ExternalLink } from 'lucide-react'
+import { Plus, Trash2, CircleCheck as CheckCircle2, CircleMinus, ShoppingCart, Sheet, Store, ExternalLink } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { getIntegrations, disconnectIntegration, buildIntegrationRedirectUrl, extractSheetId } from '../lib/api'
 import type { IntegrationType, IntegrationStatus } from '../lib/types'
@@ -86,7 +86,7 @@ export default function IntegrationsPage() {
                     <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${meta.color}`}><Icon className="h-5 w-5" /></div>
                     <div className="min-w-0 max-w-[140px]"><p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100" title={int.name}>{int.name}</p><p className="text-xs text-gray-400 dark:text-gray-500">{meta.label}</p></div>
                   </div>
-                  {int.connected ? <CheckCircle2 className="h-5 w-5 text-accent-500" /> : <XCircle className="h-5 w-5 text-gray-300 dark:text-gray-600" />}
+                  {int.connected ? <CheckCircle2 className="h-5 w-5 text-accent-500" /> : <CircleMinus className="h-5 w-5 text-gray-300 dark:text-gray-600" />}
                 </div>
                 <div className="mt-4 flex items-center justify-between">
                   <span className={`text-xs font-medium ${int.connected ? 'text-accent-600 dark:text-accent-400' : 'text-gray-400 dark:text-gray-500'}`}>{int.connected ? 'Connected' : 'Not connected'}</span>
