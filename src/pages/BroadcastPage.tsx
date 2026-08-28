@@ -1,23 +1,61 @@
-import { useState, useEffect } from 'react'
-import { Send, Loader as Loader2, Users, Plus, X, CircleAlert as AlertCircle, CircleCheck as CheckCircle2 } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { Send, Loader as Loader2, Users, X, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, CheckSquare, Square, ChevronDown, ChevronUp, Variable } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { sendBroadcast } from '../lib/api'
 import { formatPhone, initials } from '../lib/utils'
-import type { Customer } from '../lib/types'
+import type { Customer, Business } from '../lib/types'
 import PageHeader from '../components/PageHeader'
 import EmptyState from '../components/EmptyState'
 
-interface BroadcastEntry { phone: string; message: string; customerName?: string }
+const BUSINESS_VARS: { key: string; label: string }[] = [
+  { key: 'business.name', label: 'Business Name' },
+  { key: 'business.phone', label: 'Business Phone' },
+  { key: 'business.type', label: 'Business Type' },
+  { key: 'business.country', label: 'Business Country' },
+  { key: 'business.currency', label: 'Business Currency' },
+  { key: 'business.language', label: 'Business Language' },
+]
+
+const CUSTOMER_VARS: { key: string; label: string }[] = [
+  { key: 'customer.name', label: 'Customer Name' },
+  { key: 'customer.phone', label: 'Customer Phone' },
+  { key: 'customer.country', label: 'Customer Country' },
+  { key: 'customer.city', label: 'Customer City' },
+]
+
+function getVarValue(path: string, business: Business, customer: Customer): string {
+  const [entity, field] = path.split('.')
+  if (entity === 'business') {
+    const b = business as unknown as Record<string, unknown>
+    return String(b[field] ?? '')
+  }
+  if (entity === 'customer') {
+    const c = customer as unknown as Record<string, unknown>
+    return String(c[field] ?? '')
+  }
+  return ''
+}
+
+function fillTemplate(template: string, business: Business, customer: Customer): string {
+  return template.replace(/\{\{([^}]+)\}\}/g, (_match, expr: string) => {
+    const key = expr.trim()
+    return getVarValue(key, business, customer)
+  })
+}
 
 export default function BroadcastPage() {
   const { business } = useAuth()
   const [customers, setCustomers] = useState<Customer[]>([])
-  const [entries, setEntries] = useState<BroadcastEntry[]>([{ phone: '', message: '' }])
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [template, setTemplate] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [result, setResult] = useState<{ success: number; failed: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+  const [showVars, setShowVars] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
 
   useEffect(() => {
     if (!business) return
@@ -25,24 +63,52 @@ export default function BroadcastPage() {
       .then(({ data }) => { setCustomers((data as Customer[]) || []); setLoading(false) })
   }, [business])
 
-  function addEntry() { setEntries((prev) => [...prev, { phone: '', message: '' }]) }
-  function removeEntry(index: number) { setEntries((prev) => prev.filter((_, i) => i !== index)) }
-  function updateEntry(index: number, field: keyof BroadcastEntry, value: string) { setEntries((prev) => prev.map((e, i) => (i === index ? { ...e, [field]: value } : e))) }
-  function addCustomer(customer: Customer) {
-    setEntries((prev) => {
-      if (prev.some((e) => e.phone === customer.phone)) return prev
-      return [...prev, { phone: customer.phone, message: '', customerName: customer.name || undefined }]
+  const filteredCustomers = useMemo(() => {
+    if (!search.trim()) return customers
+    const q = search.toLowerCase()
+    return customers.filter((c) => (c.name?.toLowerCase().includes(q) || c.phone.includes(q)))
+  }, [customers, search])
+
+  const selectedCustomers = useMemo(() => customers.filter((c) => selectedIds.has(c.id)), [customers, selectedIds])
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
     })
   }
 
+  function selectAll() { setSelectedIds(new Set(filteredCustomers.map((c) => c.id))) }
+  function unselectAll() { setSelectedIds(new Set()) }
+
+  function insertVar(key: string) {
+    setTemplate((prev) => `${prev}{{${key}}}`)
+  }
+
+  const previewMessages = useMemo(() => {
+    if (!business || !template.trim()) return []
+    return selectedCustomers.slice(0, 3).map((c) => ({
+      name: c.name || formatPhone(c.phone),
+      rendered: fillTemplate(template, business, c),
+    }))
+  }, [business, template, selectedCustomers])
+
   async function handleSend() {
-    const valid = entries.filter((e) => e.phone.trim() && e.message.trim())
-    if (valid.length === 0) { setError('Add at least one message with phone and content'); return }
+    if (!business) return
+    if (selectedCustomers.length === 0) { setError('Select at least one customer'); return }
+    if (!template.trim()) { setError('Write a message template'); return }
     setSending(true); setError(null); setResult(null)
     try {
-      const data = await sendBroadcast(valid.map((e) => ({ phone: e.phone, message: e.message })))
+      const messages = selectedCustomers.map((c) => ({
+        phone: c.phone,
+        message: fillTemplate(template, business, c),
+      }))
+      const data = await sendBroadcast(messages)
       setResult({ success: data.sent, failed: data.failed })
-      setEntries([{ phone: '', message: '' }])
+      setSelectedIds(new Set())
+      setTemplate('')
     } catch (err) { setError(err instanceof Error ? err.message : 'Broadcast failed') }
     setSending(false)
   }
@@ -53,8 +119,8 @@ export default function BroadcastPage() {
 
   return (
     <div>
-      <PageHeader title="Broadcast" description="Send bulk messages to your customers via WhatsApp"
-        action={<button onClick={handleSend} disabled={sending} className="btn-primary">{sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Send Broadcast</button>} />
+      <PageHeader title="Broadcast" description="Send personalized bulk messages to your customers via WhatsApp"
+        action={<button onClick={handleSend} disabled={sending} className="btn-primary">{sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Send Broadcast{selectedCustomers.length > 0 && ` (${selectedCustomers.length})`}</button>} />
 
       {result && (
         <div className="mb-4 flex items-center gap-3 rounded-lg bg-accent-50 px-4 py-3 text-sm text-accent-700 animate-slide-up">
@@ -69,35 +135,107 @@ export default function BroadcastPage() {
         </div>
       )}
 
-      {customers.length > 0 && (
-        <div className="mb-6 card p-4">
-          <div className="mb-3 flex items-center gap-2"><Users className="h-4 w-4 text-gray-400" /><span className="text-sm font-medium text-gray-700">Quick add from customers</span></div>
-          <div className="flex flex-wrap gap-2">
-            {customers.slice(0, 10).map((c) => (
-              <button key={c.id} onClick={() => addCustomer(c)} className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600">{initials(c.name)}</div>
-                {c.name || formatPhone(c.phone)}<Plus className="h-3 w-3 text-gray-400" />
-              </button>
-            ))}
+      {customers.length === 0 ? (
+        <EmptyState icon={<Users className="h-5 w-5" />} title="No customers yet" description="Add customers first to send broadcast messages" />
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
+          {/* Left: Customer selection */}
+          <div className="card p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-gray-400" />
+                <span className="text-sm font-semibold text-gray-900">Select Customers</span>
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">{selectedIds.size} / {customers.length}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={selectAll} className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors">Select All</button>
+                <button onClick={unselectAll} className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 transition-colors">Unselect All</button>
+              </div>
+            </div>
+
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} className="input mt-3" placeholder="Search by name or phone..." />
+
+            <div className="mt-3 max-h-[420px] space-y-1 overflow-y-auto">
+              {filteredCustomers.length === 0 ? (
+                <p className="py-6 text-center text-sm text-gray-400">No customers found</p>
+              ) : filteredCustomers.map((c) => {
+                const selected = selectedIds.has(c.id)
+                return (
+                  <button key={c.id} onClick={() => toggleSelect(c.id)} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${selected ? 'bg-primary-50' : 'hover:bg-gray-50'}`}>
+                    {selected ? <CheckSquare className="h-4 w-4 shrink-0 text-primary-600" /> : <Square className="h-4 w-4 shrink-0 text-gray-300" />}
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600">{initials(c.name)}</div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900">{c.name || 'Unnamed'}</p>
+                      <p className="truncate text-xs text-gray-400">{formatPhone(c.phone)}{c.city ? ` · ${c.city}` : ''}</p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Right: Message template */}
+          <div className="space-y-4">
+            <div className="card p-5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-gray-900">Message Template</span>
+                <button onClick={() => setShowVars((v) => !v)} className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors">
+                  <Variable className="h-3.5 w-3.5" /> Variables {showVars ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                </button>
+              </div>
+
+              {showVars && (
+                <div className="mt-3 space-y-3 rounded-lg bg-gray-50 p-3 animate-slide-up">
+                  <div>
+                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">Business</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {BUSINESS_VARS.map((v) => (
+                        <button key={v.key} onClick={() => insertVar(v.key)} className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                          {v.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">Customer</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {CUSTOMER_VARS.map((v) => (
+                        <button key={v.key} onClick={() => insertVar(v.key)} className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                          {v.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <textarea value={template} onChange={(e) => setTemplate(e.target.value)} className="input mt-3 min-h-[160px] resize-y font-mono text-sm" placeholder="Type your message... Click Variables to insert fields like {{customer.name}}" />
+
+              <p className="mt-2 text-xs text-gray-400">Variables like <code className="rounded bg-gray-100 px-1 py-0.5 text-gray-600">{`{{customer.name}}`}</code> will be replaced with each customer's data before sending.</p>
+            </div>
+
+            {/* Live preview */}
+            {template.trim() && selectedCustomers.length > 0 && (
+              <div className="card p-5">
+                <button onClick={() => setShowPreview((p) => !p)} className="flex w-full items-center justify-between">
+                  <span className="text-sm font-semibold text-gray-900">Preview (first {Math.min(3, selectedCustomers.length)})</span>
+                  {showPreview ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+                </button>
+                {showPreview && (
+                  <div className="mt-3 space-y-3 animate-slide-up">
+                    {previewMessages.map((p, i) => (
+                      <div key={i} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                        <p className="mb-1 text-xs font-medium text-gray-500">{p.name}</p>
+                        <p className="whitespace-pre-wrap text-sm text-gray-800">{p.rendered || <span className="text-gray-300">(empty)</span>}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
-
-      <div className="space-y-4">
-        {entries.map((entry, index) => (
-          <div key={index} className="card p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">Message {index + 1}</span>
-              {entries.length > 1 && <button onClick={() => removeEntry(index)} className="rounded-lg p-1.5 text-gray-400 hover:bg-error-50 hover:text-error-600 transition-colors"><X className="h-4 w-4" /></button>}
-            </div>
-            <div className="mt-3 space-y-3">
-              <div><label className="label">Phone Number</label><input type="tel" value={entry.phone} onChange={(e) => updateEntry(index, 'phone', e.target.value)} className="input" placeholder="+1 555 000 0000" /></div>
-              <div><label className="label">Message</label><textarea value={entry.message} onChange={(e) => updateEntry(index, 'message', e.target.value)} className="input min-h-[80px] resize-y" placeholder="Type your broadcast message..." /></div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <button onClick={addEntry} className="mt-4 btn-secondary w-full"><Plus className="h-4 w-4" /> Add Another Message</button>
     </div>
   )
 }
