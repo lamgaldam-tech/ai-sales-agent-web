@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 import { RefreshCw, CircleCheck as CheckCircle2, CircleAlert as AlertCircle, Loader as Loader2, Phone, QrCode as QrIcon } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { getConnectionStatus } from '../lib/api'
+import { formatPhone } from '../lib/utils'
 import PageHeader from '../components/PageHeader'
 
 export default function ConnectionsPage() {
@@ -66,7 +67,7 @@ export default function ConnectionsPage() {
             <p className="mt-1 text-sm text-gray-500">Your WhatsApp Business account is connected and ready to receive messages.</p>
             <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-gray-50 px-3.5 py-2.5 text-sm text-gray-600">
               <Phone className="h-4 w-4 text-gray-400" />
-              {business?.phone}
+              {business?.phone ? formatPhone(business.phone) : ''}
             </div>
           </div>
         ) : (

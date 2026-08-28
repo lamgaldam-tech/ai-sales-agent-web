@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Settings as SettingsIcon, Save, Loader as Loader2, MessageSquare, Store, Phone, Globe, CircleCheck as CheckCircle2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { formatPhone } from '../lib/utils'
 import PageHeader from '../components/PageHeader'
 
 export default function SettingsPage() {
@@ -61,7 +62,7 @@ export default function SettingsPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div><label className="label">Business Name</label><div className="relative"><Store className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" /><input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input pl-10" /></div></div>
-            <div><label className="label">Phone Number</label><div className="relative"><Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" /><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="input pl-10" /></div></div>
+            <div><label className="label">Phone Number</label><div className="relative"><Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" /><input type="tel" value={phone ? formatPhone(phone) : ''} onChange={(e) => setPhone(e.target.value)} className="input pl-10" /></div></div>
             <div><label className="label">Country</label><input type="text" value={business?.country || ''} disabled className="input bg-gray-50" /></div>
             <div><label className="label">Currency</label><input type="text" value={business?.currency || ''} disabled className="input bg-gray-50" /></div>
           </div>

@@ -33,8 +33,13 @@ export function initials(name: string | null): string {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
 }
 
+export function stripWhatsAppSuffix(phone: string): string {
+  return phone.replace(/@s\.whatsapp\.net$/i, '')
+}
+
 export function formatPhone(phone: string): string {
-  const cleaned = phone.replace(/\D/g, '')
+  const stripped = stripWhatsAppSuffix(phone)
+  const cleaned = stripped.replace(/\D/g, '')
   if (cleaned.length >= 10) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 5)} ${cleaned.slice(5, 7)} ${cleaned.slice(7)}`
-  return phone
+  return stripped
 }

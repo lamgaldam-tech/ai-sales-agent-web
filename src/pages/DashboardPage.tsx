@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Users, ShoppingCart, DollarSign, MessageCircle, ArrowRight, TrendingUp } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
-import { formatCurrency, formatRelativeTime } from '../lib/utils'
+import { formatCurrency, formatRelativeTime, formatPhone } from '../lib/utils'
 import type { Customer, Order } from '../lib/types'
 import PageHeader from '../components/PageHeader'
 import StatCard from '../components/StatCard'
@@ -66,7 +66,7 @@ export default function DashboardPage() {
                 <div key={c.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600">{c.name?.charAt(0).toUpperCase() || '?'}</div>
-                    <div><p className="text-sm font-medium text-gray-900">{c.name || 'Unknown'}</p><p className="text-xs text-gray-400">{c.phone}</p></div>
+                    <div><p className="text-sm font-medium text-gray-900">{c.name || 'Unknown'}</p><p className="text-xs text-gray-400">{formatPhone(c.phone)}</p></div>
                   </div>
                   <span className="text-xs text-gray-400">{formatRelativeTime(c.created_at)}</span>
                 </div>
@@ -85,7 +85,7 @@ export default function DashboardPage() {
             <div className="space-y-2">
               {recentOrders.map((o) => (
                 <div key={o.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
-                  <div><p className="text-sm font-medium text-gray-900">{o.customer?.name || o.customer?.phone || 'Unknown'}</p><p className="text-xs text-gray-400">{formatRelativeTime(o.created_at)}</p></div>
+                  <div><p className="text-sm font-medium text-gray-900">{o.customer?.name || (o.customer?.phone ? formatPhone(o.customer.phone) : '') || 'Unknown'}</p><p className="text-xs text-gray-400">{formatRelativeTime(o.created_at)}</p></div>
                   <span className="text-sm font-semibold text-accent-600">{formatCurrency(Number(o.revenue), business?.currency)}</span>
                 </div>
               ))}

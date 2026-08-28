@@ -3,7 +3,7 @@ import { ShoppingCart, Loader as Loader2, TrendingUp, Calendar } from 'lucide-re
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
-import { formatCurrency, formatDate } from '../lib/utils'
+import { formatCurrency, formatDate, formatPhone } from '../lib/utils'
 import type { Order, Customer } from '../lib/types'
 import PageHeader from '../components/PageHeader'
 import StatCard from '../components/StatCard'
@@ -71,7 +71,7 @@ export default function OrdersPage() {
                 <tbody className="divide-y divide-gray-100">
                   {orders.map((o) => (
                     <tr key={o.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900">{o.customer?.name || o.customer?.phone || 'Unknown'}</td>
+                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900">{o.customer?.name || (o.customer?.phone ? formatPhone(o.customer.phone) : '') || 'Unknown'}</td>
                       <td className="px-4 py-3.5 text-right text-sm font-semibold text-accent-600">{formatCurrency(Number(o.revenue), business?.currency)}</td>
                       <td className="px-4 py-3.5 text-sm text-gray-500">{formatDate(o.created_at)}</td>
                     </tr>

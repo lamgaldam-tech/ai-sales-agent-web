@@ -3,7 +3,7 @@ import { Send, Loader as Loader2, Users, X, CircleAlert as AlertCircle, CircleCh
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { sendBroadcast } from '../lib/api'
-import { formatPhone, initials } from '../lib/utils'
+import { formatPhone, initials, stripWhatsAppSuffix } from '../lib/utils'
 import type { Customer, Business } from '../lib/types'
 import PageHeader from '../components/PageHeader'
 import EmptyState from '../components/EmptyState'
@@ -28,10 +28,12 @@ function getVarValue(path: string, business: Business, customer: Customer): stri
   const [entity, field] = path.split('.')
   if (entity === 'business') {
     const b = business as unknown as Record<string, unknown>
+    if (field === 'phone') return formatPhone(String(b[field] ?? ''))
     return String(b[field] ?? '')
   }
   if (entity === 'customer') {
     const c = customer as unknown as Record<string, unknown>
+    if (field === 'phone') return formatPhone(String(c[field] ?? ''))
     return String(c[field] ?? '')
   }
   return ''
@@ -102,7 +104,7 @@ export default function BroadcastPage() {
     setSending(true); setError(null); setResult(null)
     try {
       const messages = selectedCustomers.map((c) => ({
-        phone: c.phone,
+        phone: stripWhatsAppSuffix(c.phone),
         message: fillTemplate(template, business, c),
       }))
       const data = await sendBroadcast(messages)
