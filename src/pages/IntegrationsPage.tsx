@@ -84,7 +84,7 @@ export default function IntegrationsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${meta.color}`}><Icon className="h-5 w-5" /></div>
-                    <div className="min-w-0"><p className="truncate text-sm font-semibold text-gray-900" title={int.name}>{int.name}</p><p className="text-xs text-gray-400">{meta.label}</p></div>
+                    <div className="min-w-0 max-w-[140px]"><p className="truncate text-sm font-semibold text-gray-900" title={int.name}>{int.name}</p><p className="text-xs text-gray-400">{meta.label}</p></div>
                   </div>
                   {int.connected ? <CheckCircle2 className="h-5 w-5 text-accent-500" /> : <XCircle className="h-5 w-5 text-gray-300" />}
                 </div>
