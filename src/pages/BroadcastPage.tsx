@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Send, Loader as Loader2, Users, X, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, CheckSquare, Square, ChevronDown, ChevronUp, Variable } from 'lucide-react'
+import { Send, Loader as Loader2, Users, X, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, SquareCheck as CheckSquare, Square, ChevronDown, ChevronUp, Variable } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { sendBroadcast } from '../lib/api'
@@ -138,8 +138,8 @@ export default function BroadcastPage() {
       {customers.length === 0 ? (
         <EmptyState icon={<Users className="h-5 w-5" />} title="No customers yet" description="Add customers first to send broadcast messages" />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
-          {/* Left: Customer selection */}
+        <div className="space-y-6">
+          {/* Customer selection */}
           <div className="card p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export default function BroadcastPage() {
                     {selected ? <CheckSquare className="h-4 w-4 shrink-0 text-primary-600" /> : <Square className="h-4 w-4 shrink-0 text-gray-300" />}
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600">{initials(c.name)}</div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900">{c.name || 'Unnamed'}</p>
+                      <p className="truncate text-sm font-medium text-gray-900">{c.name || 'Unknown'}</p>
                       <p className="truncate text-xs text-gray-400">{formatPhone(c.phone)}{c.city ? ` · ${c.city}` : ''}</p>
                     </div>
                   </button>
@@ -174,66 +174,64 @@ export default function BroadcastPage() {
             </div>
           </div>
 
-          {/* Right: Message template */}
-          <div className="space-y-4">
-            <div className="card p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-gray-900">Message Template</span>
-                <button onClick={() => setShowVars((v) => !v)} className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors">
-                  <Variable className="h-3.5 w-3.5" /> Variables {showVars ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-                </button>
-              </div>
-
-              {showVars && (
-                <div className="mt-3 space-y-3 rounded-lg bg-gray-50 p-3 animate-slide-up">
-                  <div>
-                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">Business</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {BUSINESS_VARS.map((v) => (
-                        <button key={v.key} onClick={() => insertVar(v.key)} className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
-                          {v.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">Customer</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {CUSTOMER_VARS.map((v) => (
-                        <button key={v.key} onClick={() => insertVar(v.key)} className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
-                          {v.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <textarea value={template} onChange={(e) => setTemplate(e.target.value)} className="input mt-3 min-h-[160px] resize-y font-mono text-sm" placeholder="Type your message... Click Variables to insert fields like {{customer.name}}" />
-
-              <p className="mt-2 text-xs text-gray-400">Variables like <code className="rounded bg-gray-100 px-1 py-0.5 text-gray-600">{`{{customer.name}}`}</code> will be replaced with each customer's data before sending.</p>
+          {/* Message template */}
+          <div className="card p-5">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-gray-900">Message Template</span>
+              <button onClick={() => setShowVars((v) => !v)} className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors">
+                <Variable className="h-3.5 w-3.5" /> Variables {showVars ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+              </button>
             </div>
 
-            {/* Live preview */}
-            {template.trim() && selectedCustomers.length > 0 && (
-              <div className="card p-5">
-                <button onClick={() => setShowPreview((p) => !p)} className="flex w-full items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-900">Preview (first {Math.min(3, selectedCustomers.length)})</span>
-                  {showPreview ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
-                </button>
-                {showPreview && (
-                  <div className="mt-3 space-y-3 animate-slide-up">
-                    {previewMessages.map((p, i) => (
-                      <div key={i} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
-                        <p className="mb-1 text-xs font-medium text-gray-500">{p.name}</p>
-                        <p className="whitespace-pre-wrap text-sm text-gray-800">{p.rendered || <span className="text-gray-300">(empty)</span>}</p>
-                      </div>
+            {showVars && (
+              <div className="mt-3 space-y-3 rounded-lg bg-gray-50 p-3 animate-slide-up">
+                <div>
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">Business</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {BUSINESS_VARS.map((v) => (
+                      <button key={v.key} onClick={() => insertVar(v.key)} className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                        {v.label}
+                      </button>
                     ))}
                   </div>
-                )}
+                </div>
+                <div>
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">Customer</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {CUSTOMER_VARS.map((v) => (
+                      <button key={v.key} onClick={() => insertVar(v.key)} className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600 hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                        {v.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
+
+            <textarea value={template} onChange={(e) => setTemplate(e.target.value)} className="input mt-3 min-h-[160px] resize-y font-mono text-sm" placeholder="Type your message... Click Variables to insert fields like {{customer.name}}" />
+
+            <p className="mt-2 text-xs text-gray-400">Variables like <code className="rounded bg-gray-100 px-1 py-0.5 text-gray-600">{`{{customer.name}}`}</code> will be replaced with each customer's data before sending.</p>
           </div>
+
+          {/* Live preview */}
+          {template.trim() && selectedCustomers.length > 0 && (
+            <div className="card p-5">
+              <button onClick={() => setShowPreview((p) => !p)} className="flex w-full items-center justify-between">
+                <span className="text-sm font-semibold text-gray-900">Preview (first {Math.min(3, selectedCustomers.length)})</span>
+                {showPreview ? <ChevronUp className="h-4 w-4 text-gray-400" /> : <ChevronDown className="h-4 w-4 text-gray-400" />}
+              </button>
+              {showPreview && (
+                <div className="mt-3 space-y-3 animate-slide-up">
+                  {previewMessages.map((p, i) => (
+                    <div key={i} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                      <p className="mb-1 text-xs font-medium text-gray-500">{p.name}</p>
+                      <p className="whitespace-pre-wrap text-sm text-gray-800">{p.rendered || <span className="text-gray-300">(empty)</span>}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
