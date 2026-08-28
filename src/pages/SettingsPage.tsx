@@ -57,45 +57,45 @@ export default function SettingsPage() {
       <div className="space-y-6">
         <div className="card p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600"><Store className="h-5 w-5" /></div>
-            <div><h2 className="text-sm font-semibold text-gray-900">Business Profile</h2><p className="text-xs text-gray-500">Update your business information</p></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/40 dark:text-primary-400"><Store className="h-5 w-5" /></div>
+            <div><h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Business Profile</h2><p className="text-xs text-gray-500 dark:text-gray-400">Update your business information</p></div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div><label className="label">Business Name</label><div className="relative"><Store className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" /><input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input pl-10" /></div></div>
             <div><label className="label">Phone Number</label><div className="relative"><Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" /><input type="tel" value={phone ? formatPhone(phone) : ''} onChange={(e) => setPhone(e.target.value)} className="input pl-10" /></div></div>
-            <div><label className="label">Country</label><input type="text" value={business?.country || ''} disabled className="input bg-gray-50" /></div>
-            <div><label className="label">Currency</label><input type="text" value={business?.currency || ''} disabled className="input bg-gray-50" /></div>
+            <div><label className="label">Country</label><input type="text" value={business?.country || ''} disabled className="input bg-gray-50 dark:bg-gray-700" /></div>
+            <div><label className="label">Currency</label><input type="text" value={business?.currency || ''} disabled className="input bg-gray-50 dark:bg-gray-700" /></div>
           </div>
           <div className="mt-5 flex items-center gap-3">
             <button onClick={handleSaveProfile} disabled={savingProfile} className="btn-primary">{savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save Profile</button>
-            {savedProfile && <span className="flex items-center gap-1.5 text-sm text-accent-600 animate-fade-in"><CheckCircle2 className="h-4 w-4" /> Saved</span>}
+            {savedProfile && <span className="flex items-center gap-1.5 text-sm text-accent-600 animate-fade-in dark:text-accent-400"><CheckCircle2 className="h-4 w-4" /> Saved</span>}
           </div>
         </div>
 
         <div className="card p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-50 text-accent-600"><MessageSquare className="h-5 w-5" /></div>
-            <div><h2 className="text-sm font-semibold text-gray-900">AI Instructions</h2><p className="text-xs text-gray-500">Configure how your AI agent talks to customers</p></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-50 text-accent-600 dark:bg-accent-900/40 dark:text-accent-400"><MessageSquare className="h-5 w-5" /></div>
+            <div><h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">AI Instructions</h2><p className="text-xs text-gray-500 dark:text-gray-400">Configure how your AI agent talks to customers</p></div>
           </div>
           <div>
             <label className="label">System Prompt</label>
             <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className="input min-h-[200px] resize-y font-mono text-sm" placeholder="Enter instructions for your AI sales agent..." />
-            <p className="mt-2 text-xs text-gray-400">This prompt tells the AI how to behave when talking to customers on WhatsApp.</p>
+            <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">This prompt tells the AI how to behave when talking to customers on WhatsApp.</p>
           </div>
           <div className="mt-5 flex items-center gap-3">
             <button onClick={handleSavePrompt} disabled={savingPrompt} className="btn-primary">{savingPrompt ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save Instructions</button>
-            {savedPrompt && <span className="flex items-center gap-1.5 text-sm text-accent-600 animate-fade-in"><CheckCircle2 className="h-4 w-4" /> Saved</span>}
+            {savedPrompt && <span className="flex items-center gap-1.5 text-sm text-accent-600 animate-fade-in dark:text-accent-400"><CheckCircle2 className="h-4 w-4" /> Saved</span>}
           </div>
         </div>
 
         <div className="card p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-50 text-warning-600"><SettingsIcon className="h-5 w-5" /></div>
-            <div><h2 className="text-sm font-semibold text-gray-900">Plan</h2><p className="text-xs text-gray-500">Your current subscription</p></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-50 text-warning-600 dark:bg-warning-900/40 dark:text-warning-400"><SettingsIcon className="h-5 w-5" /></div>
+            <div><h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Plan</h2><p className="text-xs text-gray-500 dark:text-gray-400">Your current subscription</p></div>
           </div>
-          <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3">
-            <div><p className="text-sm font-medium text-gray-900 capitalize">{business?.plan} Plan</p><p className="text-xs text-gray-400">Manage your subscription</p></div>
-            <Globe className="h-5 w-5 text-gray-400" />
+          <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3 dark:bg-gray-700">
+            <div><p className="text-sm font-medium text-gray-900 capitalize dark:text-gray-100">{business?.plan} Plan</p><p className="text-xs text-gray-400 dark:text-gray-500">Manage your subscription</p></div>
+            <Globe className="h-5 w-5 text-gray-400 dark:text-gray-500" />
           </div>
         </div>
       </div>

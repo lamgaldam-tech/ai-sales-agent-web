@@ -84,19 +84,19 @@ export default function IntegrationsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${meta.color}`}><Icon className="h-5 w-5" /></div>
-                    <div className="min-w-0 max-w-[140px]"><p className="truncate text-sm font-semibold text-gray-900" title={int.name}>{int.name}</p><p className="text-xs text-gray-400">{meta.label}</p></div>
+                    <div className="min-w-0 max-w-[140px]"><p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100" title={int.name}>{int.name}</p><p className="text-xs text-gray-400 dark:text-gray-500">{meta.label}</p></div>
                   </div>
-                  {int.connected ? <CheckCircle2 className="h-5 w-5 text-accent-500" /> : <XCircle className="h-5 w-5 text-gray-300" />}
+                  {int.connected ? <CheckCircle2 className="h-5 w-5 text-accent-500" /> : <XCircle className="h-5 w-5 text-gray-300 dark:text-gray-600" />}
                 </div>
                 <div className="mt-4 flex items-center justify-between">
-                  <span className={`text-xs font-medium ${int.connected ? 'text-accent-600' : 'text-gray-400'}`}>{int.connected ? 'Connected' : 'Not connected'}</span>
+                  <span className={`text-xs font-medium ${int.connected ? 'text-accent-600 dark:text-accent-400' : 'text-gray-400 dark:text-gray-500'}`}>{int.connected ? 'Connected' : 'Not connected'}</span>
                   <div className="flex items-center gap-1">
                     {!int.connected && (
-                      <button onClick={() => handleReconnect(int.identifier, int.type)} className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors" title="Connect">
+                      <button onClick={() => handleReconnect(int.identifier, int.type)} className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors dark:hover:bg-primary-900/40" title="Connect">
                         <ExternalLink className="h-3.5 w-3.5" /> Connect
                       </button>
                     )}
-                    <button onClick={() => handleDisconnect(int.id)} className="rounded-lg p-2 text-gray-400 hover:bg-error-50 hover:text-error-600 transition-colors" title="Remove"><Trash2 className="h-4 w-4" /></button>
+                    <button onClick={() => handleDisconnect(int.id)} className="rounded-lg p-2 text-gray-400 hover:bg-error-50 hover:text-error-600 transition-colors dark:text-gray-500 dark:hover:bg-error-900/40 dark:hover:text-error-400" title="Remove"><Trash2 className="h-4 w-4" /></button>
                   </div>
                 </div>
               </div>
@@ -108,8 +108,8 @@ export default function IntegrationsPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 animate-fade-in" onClick={() => { setShowAdd(false); setInputValue(''); setNewType('shopify') }}>
           <div className="w-full max-w-md card p-6 animate-slide-up" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-gray-900">Add Integration</h2>
-            <p className="mt-1 text-sm text-gray-500">Choose a platform and enter your details</p>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Add Integration</h2>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose a platform and enter your details</p>
             <div className="mt-5 space-y-4">
               <div>
                 <label className="label">Platform</label>
@@ -118,8 +118,8 @@ export default function IntegrationsPage() {
                     const meta = INTEGRATION_META[type]
                     const Icon = meta.icon
                     return (
-                      <button key={type} onClick={() => { setNewType(type); setInputValue('') }} className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${newType === type ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                        <Icon className="h-6 w-6 text-gray-600" /><span className="text-xs font-medium text-gray-700">{meta.label}</span>
+                      <button key={type} onClick={() => { setNewType(type); setInputValue('') }} className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${newType === type ? 'border-primary-500 bg-primary-50 dark:border-primary-500 dark:bg-primary-900/30' : 'border-gray-200 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-500'}`}>
+                        <Icon className="h-6 w-6 text-gray-600 dark:text-gray-300" /><span className="text-xs font-medium text-gray-700 dark:text-gray-300">{meta.label}</span>
                       </button>
                     )
                   })}
@@ -136,7 +136,7 @@ export default function IntegrationsPage() {
                   placeholder={INTEGRATION_META[newType].placeholder}
                 />
                 {newType === 'google_sheets' && (
-                  <p className="mt-1.5 text-xs text-gray-400">Paste the spreadsheet URL or ID. If a URL is pasted, the sheet ID will be extracted automatically.</p>
+                  <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">Paste the spreadsheet URL or ID. If a URL is pasted, the sheet ID will be extracted automatically.</p>
                 )}
               </div>
             </div>

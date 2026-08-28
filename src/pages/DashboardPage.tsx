@@ -38,7 +38,7 @@ export default function DashboardPage() {
     return (
       <div>
         <PageHeader title="Dashboard" description="Overview of your business performance" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[1, 2, 3, 4].map((i) => <div key={i} className="card h-32 animate-pulse bg-gray-100" />)}</div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[1, 2, 3, 4].map((i) => <div key={i} className="card h-32 animate-pulse bg-gray-100 dark:bg-gray-700" />)}</div>
       </div>
     )
   }
@@ -65,10 +65,10 @@ export default function DashboardPage() {
               {recentCustomers.map((c) => (
                 <div key={c.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600">{c.name?.charAt(0).toUpperCase() || '?'}</div>
-                    <div><p className="text-sm font-medium text-gray-900">{c.name || 'Unknown'}</p><p className="text-xs text-gray-400">{formatPhone(c.phone)}</p></div>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">{c.name?.charAt(0).toUpperCase() || '?'}</div>
+                    <div><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{c.name || 'Unknown'}</p><p className="text-xs text-gray-400 dark:text-gray-500">{formatPhone(c.phone)}</p></div>
                   </div>
-                  <span className="text-xs text-gray-400">{formatRelativeTime(c.created_at)}</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">{formatRelativeTime(c.created_at)}</span>
                 </div>
               ))}
             </div>
@@ -85,7 +85,7 @@ export default function DashboardPage() {
             <div className="space-y-2">
               {recentOrders.map((o) => (
                 <div key={o.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
-                  <div><p className="text-sm font-medium text-gray-900">{o.customer?.name || (o.customer?.phone ? formatPhone(o.customer.phone) : '') || 'Unknown'}</p><p className="text-xs text-gray-400">{formatRelativeTime(o.created_at)}</p></div>
+                  <div><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{o.customer?.name || (o.customer?.phone ? formatPhone(o.customer.phone) : '') || 'Unknown'}</p><p className="text-xs text-gray-400 dark:text-gray-500">{formatRelativeTime(o.created_at)}</p></div>
                   <span className="text-sm font-semibold text-accent-600">{formatCurrency(Number(o.revenue), business?.currency)}</span>
                 </div>
               ))}

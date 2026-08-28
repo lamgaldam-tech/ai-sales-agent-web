@@ -63,9 +63,9 @@ export default function ConnectionsPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent-100">
               <CheckCircle2 className="h-8 w-8 text-accent-600" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">WhatsApp Connected</h2>
-            <p className="mt-1 text-sm text-gray-500">Your WhatsApp Business account is connected and ready to receive messages.</p>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-gray-50 px-3.5 py-2.5 text-sm text-gray-600">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">WhatsApp Connected</h2>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Your WhatsApp Business account is connected and ready to receive messages.</p>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-gray-50 px-3.5 py-2.5 text-sm text-gray-600 dark:bg-gray-700 dark:text-gray-300">
               <Phone className="h-4 w-4 text-gray-400" />
               {business?.phone ? formatPhone(business.phone) : ''}
             </div>
@@ -75,20 +75,20 @@ export default function ConnectionsPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-warning-100">
               <AlertCircle className="h-8 w-8 text-warning-600" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Not Connected</h2>
-            <p className="mt-1 text-sm text-gray-500">Scan the QR code below with your WhatsApp to connect your account.</p>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Not Connected</h2>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Scan the QR code below with your WhatsApp to connect your account.</p>
             <div className="mt-6 flex flex-col items-center">
-              <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white p-4">
+              <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white p-4 dark:border-gray-600 dark:bg-gray-700">
                 {qrDataUrl ? (
                   <img src={qrDataUrl} alt="WhatsApp QR Code" className="h-48 w-48" />
                 ) : (
-                  <div className="flex h-48 w-48 flex-col items-center justify-center text-gray-300">
+                  <div className="flex h-48 w-48 flex-col items-center justify-center text-gray-300 dark:text-gray-600">
                     {qrPlaceholder}
                     <p className="mt-2 text-xs">QR code unavailable</p>
                   </div>
                 )}
               </div>
-              <p className="mt-4 max-w-xs text-xs text-gray-400">Open WhatsApp on your phone, go to Settings &gt; Linked Devices, and scan this code.</p>
+              <p className="mt-4 max-w-xs text-xs text-gray-400 dark:text-gray-500">Open WhatsApp on your phone, go to Settings &gt; Linked Devices, and scan this code.</p>
             </div>
           </div>
         )}

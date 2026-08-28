@@ -62,18 +62,18 @@ export default function OrdersPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Customer</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Revenue</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date</th>
+                  <tr className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Customer</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Revenue</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                   {orders.map((o) => (
-                    <tr key={o.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900">{o.customer?.name || (o.customer?.phone ? formatPhone(o.customer.phone) : '') || 'Unknown'}</td>
+                    <tr key={o.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-gray-700/50">
+                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900 dark:text-gray-100">{o.customer?.name || (o.customer?.phone ? formatPhone(o.customer.phone) : '') || 'Unknown'}</td>
                       <td className="px-4 py-3.5 text-right text-sm font-semibold text-accent-600">{formatCurrency(Number(o.revenue), business?.currency)}</td>
-                      <td className="px-4 py-3.5 text-sm text-gray-500">{formatDate(o.created_at)}</td>
+                      <td className="px-4 py-3.5 text-sm text-gray-500 dark:text-gray-400">{formatDate(o.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>

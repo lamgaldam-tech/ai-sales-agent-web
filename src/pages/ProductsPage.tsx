@@ -44,21 +44,21 @@ export default function ProductsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Product</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Description</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Price</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Stock</th>
+                  <tr className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Product</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Description</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Price</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Stock</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                   {filtered.map((p, i) => (
-                    <tr key={i} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900">{p.name}</td>
-                      <td className="px-4 py-3.5 text-sm text-gray-500 max-w-xs truncate">{p.description}</td>
-                      <td className="px-4 py-3.5 text-right text-sm font-semibold text-gray-900">{formatCurrency(p.price, business?.currency)}</td>
+                    <tr key={i} className="hover:bg-gray-50 transition-colors dark:hover:bg-gray-700/50">
+                      <td className="px-4 py-3.5 text-sm font-medium text-gray-900 dark:text-gray-100">{p.name}</td>
+                      <td className="px-4 py-3.5 text-sm text-gray-500 max-w-xs truncate dark:text-gray-400">{p.description}</td>
+                      <td className="px-4 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(p.price, business?.currency)}</td>
                       <td className="px-4 py-3.5 text-right">
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${p.quantity > 10 ? 'bg-accent-50 text-accent-700' : p.quantity > 0 ? 'bg-warning-50 text-warning-700' : 'bg-error-50 text-error-700'}`}>{p.quantity} in stock</span>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${p.quantity > 10 ? 'bg-accent-50 text-accent-700 dark:bg-accent-900/40 dark:text-accent-400' : p.quantity > 0 ? 'bg-warning-50 text-warning-700 dark:bg-warning-900/40 dark:text-warning-400' : 'bg-error-50 text-error-700 dark:bg-error-900/40 dark:text-error-400'}`}>{p.quantity} in stock</span>
                       </td>
                     </tr>
                   ))}
