@@ -55,7 +55,7 @@ export default function DashboardPage() {
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <div className="card p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">Recent Customers</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Recent Customers</h2>
             <Link to="/customers" className="text-xs font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
           </div>
           {recentCustomers.length === 0 ? (
@@ -63,7 +63,7 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-2">
               {recentCustomers.map((c) => (
-                <div key={c.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
+                <div key={c.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">{c.name?.charAt(0).toUpperCase() || '?'}</div>
                     <div><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{c.name || 'Unknown'}</p><p className="text-xs text-gray-400 dark:text-gray-500">{formatPhone(c.phone)}</p></div>
@@ -76,7 +76,7 @@ export default function DashboardPage() {
         </div>
         <div className="card p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">Recent Orders</h2>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Recent Orders</h2>
             <Link to="/orders" className="text-xs font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
           </div>
           {recentOrders.length === 0 ? (
@@ -84,7 +84,7 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-2">
               {recentOrders.map((o) => (
-                <div key={o.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50">
+                <div key={o.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <div><p className="text-sm font-medium text-gray-900 dark:text-gray-100">{o.customer?.name || (o.customer?.phone ? formatPhone(o.customer.phone) : '') || 'Unknown'}</p><p className="text-xs text-gray-400 dark:text-gray-500">{formatRelativeTime(o.created_at)}</p></div>
                   <span className="text-sm font-semibold text-accent-600">{formatCurrency(Number(o.revenue), business?.currency)}</span>
                 </div>
