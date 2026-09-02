@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import AuthPage from './pages/AuthPage'
 import OnboardingPage from './pages/OnboardingPage'
+import LandingPage from './pages/LandingPage'
 import DashboardLayout from './components/DashboardLayout'
 import DashboardPage from './pages/DashboardPage'
 import ConnectionsPage from './pages/ConnectionsPage'
@@ -16,7 +17,7 @@ import LoadingScreen from './components/LoadingScreen'
 function ProtectedRoutes() {
   const { user, business, loading } = useAuth()
   if (loading) return <LoadingScreen />
-  if (!user) return <Navigate to="/auth" replace />
+  if (!user) return <Navigate to="/landing" replace />
   if (!business) return <Navigate to="/onboarding" replace />
   return (
     <DashboardLayout>
@@ -40,6 +41,7 @@ export default function App() {
   if (loading) return <LoadingScreen />
   return (
     <Routes>
+      <Route path="/landing" element={user && business ? <Navigate to="/" replace /> : <LandingPage />} />
       <Route path="/auth" element={user && business ? <Navigate to="/" replace /> : user ? <Navigate to="/onboarding" replace /> : <AuthPage />} />
       <Route path="/onboarding" element={!user ? <Navigate to="/auth" replace /> : business ? <Navigate to="/" replace /> : <OnboardingPage />} />
       <Route path="/*" element={<ProtectedRoutes />} />
